@@ -1,0 +1,79 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply font-body;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-cream text-gray-800 antialiased;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-brand-500 text-white font-medium px-5 py-2.5 rounded-xl 
+           hover:bg-brand-600 active:scale-95 transition-all duration-150
+           shadow-warm hover:shadow-warm-lg disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  .btn-secondary {
+    @apply bg-white text-brand-500 font-medium px-5 py-2.5 rounded-xl border border-brand-200
+           hover:bg-brand-50 active:scale-95 transition-all duration-150;
+  }
+  .btn-ghost {
+    @apply text-gray-600 font-medium px-4 py-2 rounded-xl
+           hover:bg-gray-100 active:scale-95 transition-all duration-150;
+  }
+  .card {
+    @apply bg-white rounded-2xl shadow-sm border border-orange-100/60 
+           hover:shadow-warm transition-all duration-200;
+  }
+  .input {
+    @apply w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-white
+           focus:outline-none focus:ring-2 focus:ring-brand-400 focus:border-transparent
+           placeholder-gray-400 transition-all duration-150;
+  }
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+}
+
+/* Animated underline for nav links */
+.nav-link {
+  position: relative;
+}
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: theme('colors.brand.500');
+  border-radius: 9999px;
+  transform: scaleX(0);
+  transition: transform 0.2s ease;
+}
+.nav-link.active::after,
+.nav-link:hover::after {
+  transform: scaleX(1);
+}
+
+/* Page transition */
+.page-enter {
+  animation: fadeSlideUp 0.3s ease forwards;
+}
+
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Skeleton loading */
+.skeleton {
+  @apply animate-pulse bg-gray-200 rounded-xl;
+}
