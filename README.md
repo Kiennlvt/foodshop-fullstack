@@ -1,10 +1,10 @@
-# 🌿 FoodShop — Full-Stack E-Commerce App
+# FoodShop — Full-Stack E-Commerce App
 
 A production-ready food shop built with ASP.NET Core 8 + React + Tailwind CSS.
 
 ---
 
-## 🧰 Tech Stack
+## Tech Stack
 
 ### Backend
 | Layer | Technology |
@@ -13,6 +13,8 @@ A production-ready food shop built with ASP.NET Core 8 + React + Tailwind CSS.
 | ORM | Entity Framework Core 8 (Code First) |
 | Database | SQL Server |
 | Auth | JWT Bearer Tokens |
+| Caching | Redis (Decorator pattern via `ICacheService`) |
+| Logging | Serilog (Console + File sinks, structured HTTP logging) |
 | Mapping | AutoMapper |
 | Password Hashing | BCrypt.Net |
 | Docs | Swagger / OpenAPI |
@@ -30,16 +32,17 @@ A production-ready food shop built with ASP.NET Core 8 + React + Tailwind CSS.
 
 ---
 
-## 🚀 How to Run
+## How to Run
 
 ### Prerequisites
 - [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
 - [SQL Server](https://www.microsoft.com/en-us/sql-server) (or SQL Server Express / LocalDB)
+- [Redis](https://redis.io/download/) (local instance on default port 6379)
 - [Node.js 18+](https://nodejs.org)
 
 ---
 
-### 1️⃣ Backend Setup
+### 1. Backend Setup
 
 ```bash
 cd backend/FoodShop.API
@@ -47,8 +50,9 @@ cd backend/FoodShop.API
 # Restore NuGet packages
 dotnet restore
 
-# Update appsettings.json with your SQL Server connection string:
+# Update appsettings.json with your connection strings:
 # "DefaultConnection": "Server=localhost;Database=FoodShopDb;Trusted_Connection=True;TrustServerCertificate=True;"
+# "Redis": "localhost:6379"
 
 # Install EF Core CLI tools (once)
 dotnet tool install --global dotnet-ef
@@ -57,13 +61,13 @@ dotnet tool install --global dotnet-ef
 dotnet ef migrations add InitialCreate
 dotnet ef database update
 
-# Run the API (http://localhost:5000)
+# Run the API (https://localhost:62468)
 dotnet run
 ```
 
-Swagger UI: http://localhost:5000/swagger
+Swagger UI: https://localhost:62468/swagger
 
-> ✅ The database is auto-seeded on first run with categories, products, and two users.
+> The database is auto-seeded on first run with categories, products, and two users.
 
 **Demo Accounts:**
 | Email | Password | Role |
@@ -73,7 +77,7 @@ Swagger UI: http://localhost:5000/swagger
 
 ---
 
-### 2️⃣ Frontend Setup
+### 2. Frontend Setup
 
 ```bash
 cd frontend
@@ -87,22 +91,31 @@ npm run dev
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 foodshop/
 ├── backend/FoodShop.API/
-│   ├── Controllers/        # Auth, Products, Categories, Cart, Orders
+│   ├── Controllers/        # Auth, ProductsCategories, CartOrders
 │   ├── Data/               # AppDbContext, DataSeeder
 │   ├── DTOs/               # Request/Response objects per domain
-│   ├── Entities/           # User, Product, Category, Cart, Order...
+│   ├── Entities/           # User, Product, Category, Cart, Order
 │   ├── Helpers/            # JWT claims extensions
-│   ├── Interfaces/         # IService + IRepository contracts
+│   ├── Interfaces/
+│   │   ├── IServices.cs    # IAuth/Product/Category/Cart/Order/Cache service contracts
+│   │   └── Repositories/   # IRepository contracts
 │   ├── Mappings/           # AutoMapper profile
-│   ├── Middleware/         # Global exception handler
+│   ├── Middleware/         # ExceptionMiddleware, RequestLoggingMiddleware
 │   ├── Repositories/       # Data access implementations
-│   ├── Services/           # Business logic implementations
-│   ├── Program.cs          # DI, JWT, Swagger, CORS, Seeding
+│   ├── Services/
+│   │   ├── AuthService.cs
+│   │   ├── ProductCategoryService.cs
+│   │   ├── CartService.cs
+│   │   ├── OrderService.cs
+│   │   ├── CacheService.cs            # RedisCacheService
+│   │   ├── CachedProductService.cs    # Decorator wrapping ProductService
+│   │   └── CachedCategoryService.cs   # Decorator wrapping CategoryService
+│   ├── Program.cs          # DI, JWT, Redis, Serilog, Swagger, CORS, Seeding
 │   └── appsettings.json
 │
 └── frontend/
@@ -115,7 +128,7 @@ foodshop/
 
 ---
 
-## 🔑 API Endpoints
+## API Endpoints
 
 | Method | Endpoint | Auth |
 |---|---|---|
@@ -139,8 +152,10 @@ foodshop/
 
 ---
 
-## ✨ Highlights for CV
+## Highlights for CV
 
+- **Redis caching** — Decorator pattern (`CachedProductService`, `CachedCategoryService`) keeps controllers/services unaware of caching
+- **Structured logging** — Serilog with Console + File sinks; `RequestLoggingMiddleware` logs every HTTP request with timing
 - **N+1 prevention** — all queries use `.Include()` / `.ThenInclude()`
 - **Indexing** — DB indexes on `Product.Name`, `Product.CategoryId`, `Order.UserId`, `Order.Status`
 - **Pagination** — server-side with `PagedResult<T>` and configurable page size
