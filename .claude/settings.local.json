@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dotnet package *)",
+      "Bash(dotnet restore *)",
+      "Bash(dotnet build *)",
+      "PowerShell(Get-ChildItem *)"
+    ]
+  }
+}

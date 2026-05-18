@@ -1,6 +1,7 @@
 using AutoMapper;
 using FoodShop.API.Mappings;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace FoodShop.Tests;
 
@@ -12,7 +13,7 @@ public static class TestHelpers
     /// <summary>Tạo IMapper thật (không mock) với MappingProfile của app</summary>
     public static IMapper CreateMapper()
     {
-        var config = new MapperConfiguration(cfg => cfg.AddProfile<MappingProfile>());
+        var config = new MapperConfiguration(cfg => cfg.AddProfile<MappingProfile>(), NullLoggerFactory.Instance);
         return config.CreateMapper();
     }
 

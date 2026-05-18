@@ -64,7 +64,7 @@ try
          .AllowAnyHeader().AllowAnyMethod()));
 
     // AutoMapper
-    builder.Services.AddAutoMapper(typeof(MappingProfile));
+    builder.Services.AddAutoMapper(cfg => cfg.AddProfile<MappingProfile>());
 
     // Repositories
     builder.Services.AddScoped<IUserRepository,     UserRepository>();
