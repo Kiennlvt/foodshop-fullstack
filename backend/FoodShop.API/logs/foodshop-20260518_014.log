@@ -1,0 +1,1 @@
+[2026-05-18 15:36:24 INF] HTTP GET /swagger/index.html responded 200 in 50ms | User: anonymous {"SourceContext":"FoodShop.API.Middleware.RequestLoggingMiddleware","RequestId":"0HNLKN25SSLVB:00000001","RequestPath":"/swagger/index.html","ConnectionId":"0HNLKN25SSLVB","MachineName":"DESKTOP-A8D7LM9","ThreadId":20}
